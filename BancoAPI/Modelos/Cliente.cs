@@ -6,14 +6,15 @@ namespace BancoAPI.Modelos
     {
         [Key]
         public int Id { get; set; }
+
         [Required]
         [MaxLength(100)]
         public string Contrasenia { get; set; }
-        [Required]
 
+        [Required]
         public bool Estado { get; set; }
+
         public int PersonaId { get; set; }
         public Persona Persona { get; set; }
-
     }
 }

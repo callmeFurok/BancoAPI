@@ -4,6 +4,7 @@ namespace BancoAPI.Modelos
 {
     public class Cuenta
     {
+        [Key]
         public int Id { get; set; }
         [Required]
         public string NumeroCuenta { get; set; }
@@ -12,7 +13,7 @@ namespace BancoAPI.Modelos
         [Required]
         public decimal SaldoInicial { get; set; }
         [Required]
-        public string Estado { get; set; }
+        public bool Estado { get; set; }
         public int ClienteId { get; set; }
         public Cliente Cliente { get; set; }
     }
