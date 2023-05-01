@@ -6,9 +6,11 @@ namespace BancoAPI.Modelos
     {
         [Key]
         public int Id { get; set; }
+
         [Required]
         [MaxLength(100)]
         public string Nombre { get; set; }
+
         [Required]
         [MaxLength(3)]
         public string Edad { get; set; }
@@ -20,9 +22,11 @@ namespace BancoAPI.Modelos
         [Required]
         [MaxLength(10)]
         public string Identificacion { get; set; }
+
         [Required]
         [MaxLength(100)]
         public string Direccion { get; set; }
+
         [Required]
         [MaxLength(10)]
         public string Telefono { get; set; }
