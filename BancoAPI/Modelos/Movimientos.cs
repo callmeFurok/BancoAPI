@@ -7,7 +7,7 @@ namespace BancoAPI.Modelos
     public class Movimientos
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public DateTime Fecha { get; set; }
@@ -24,7 +24,7 @@ namespace BancoAPI.Modelos
         public decimal Saldo { get; set; }
 
         [Required]
-        public int CuentaId { get; set; }
+        public Guid CuentaId { get; set; }
 
         public Cuenta Cuenta { get; set; }
     }

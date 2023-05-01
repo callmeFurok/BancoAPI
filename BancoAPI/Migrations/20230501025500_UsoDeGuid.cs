@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BancoAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class CreacionModelos : Migration
+    public partial class UsoDeGuid : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,8 +15,7 @@ namespace BancoAPI.Migrations
                 name: "Clientes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Contrasenia = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Estado = table.Column<bool>(type: "bit", nullable: false),
                     Nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -35,13 +34,12 @@ namespace BancoAPI.Migrations
                 name: "Cuentas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     NumeroCuenta = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TipoCuenta = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SaldoInicial = table.Column<decimal>(type: "decimal(18,0)", nullable: false),
                     Estado = table.Column<bool>(type: "bit", nullable: false),
-                    ClienteId = table.Column<int>(type: "int", nullable: false)
+                    ClienteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,13 +56,12 @@ namespace BancoAPI.Migrations
                 name: "Movimientos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TipoMovimiento = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Valor = table.Column<decimal>(type: "decimal(18,0)", nullable: false),
                     Saldo = table.Column<decimal>(type: "decimal(18,0)", nullable: false),
-                    CuentaId = table.Column<int>(type: "int", nullable: false)
+                    CuentaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -6,7 +6,7 @@ namespace BancoAPI.Modelos
     public class Cuenta
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string NumeroCuenta { get; set; }
@@ -21,7 +21,7 @@ namespace BancoAPI.Modelos
         [Required]
         public bool Estado { get; set; }
 
-        public int ClienteId { get; set; }
+        public Guid ClienteId { get; set; }
         public Cliente Cliente { get; set; }
     }
 }

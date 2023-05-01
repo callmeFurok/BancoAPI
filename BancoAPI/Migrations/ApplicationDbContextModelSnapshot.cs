@@ -24,11 +24,9 @@ namespace BancoAPI.Migrations
 
             modelBuilder.Entity("BancoAPI.Modelos.Cliente", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Contrasenia")
                         .IsRequired()
@@ -75,14 +73,12 @@ namespace BancoAPI.Migrations
 
             modelBuilder.Entity("BancoAPI.Modelos.Cuenta", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ClienteId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Estado")
                         .HasColumnType("bit");
@@ -107,14 +103,12 @@ namespace BancoAPI.Migrations
 
             modelBuilder.Entity("BancoAPI.Modelos.Movimientos", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CuentaId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CuentaId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
