@@ -3,32 +3,18 @@ version: '3.4'
 services:
   bancoapi:
     image: ${DOCKER_REGISTRY-}bancoapi
-    container_name: ApiBanco
-    hostname: ApiBanco
+    container_name: banco_api
     build:
       context: .
       dockerfile: BancoAPI/Dockerfile
     ports:
-    - "500:80"
-    networks:
-      bancoapi-network:
-        ipv4_address: 172.17.0.2
-        
-  sql_server:
+     - "5000:80"
+  sql:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
-    container_name: SqlApiBanco
-    hostname: SqlApiBanco
-    ports: 
+    container_name: sql_server
+    ports: # not actually needed, because the two services are on the same network
       - "1433:1433" 
     environment:
       - ACCEPT_EULA=y
-      - MSSQL_SA_PASSWORD=Strong@Passw0rd
-    networks:
-      bancoapi-network:
-        ipv4_address: 172.17.0.3
-        
-networks:
-    bancoapi-network:
-        driver: bridge
-   
-  
+      - MSSQL_SA_PASSWORD=Strong@Passw0rd 
+

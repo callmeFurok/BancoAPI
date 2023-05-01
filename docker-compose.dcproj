@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>bbfef6b7-eea8-4008-b9df-51f61797035a</ProjectGuid>
+    <ProjectGuid>c6f1454e-4506-4d3a-af03-2ccd71f5368c</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/api</DockerServiceUrl>
     <DockerServiceName>bancoapi</DockerServiceName>

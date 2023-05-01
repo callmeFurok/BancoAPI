@@ -13,10 +13,11 @@ namespace BancoAPI
 
             // Add conection string to the container.
             var connectionString = builder.Configuration.GetConnectionString("DockerSQLApi");
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddNewtonsoftJson();
 
             var app = builder.Build();
 

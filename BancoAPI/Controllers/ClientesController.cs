@@ -1,5 +1,7 @@
 ﻿using BancoAPI.Data;
 using BancoAPI.Modelos;
+using BancoAPI.Modelos.Dtos;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +10,6 @@ namespace BancoAPI.Controllers
     [Route("api/clientes")]
     [ApiController]
     [Produces("application/json")]
-
     public class ClientesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -18,21 +19,29 @@ namespace BancoAPI.Controllers
             _context = context;
         }
 
+        #region Metodos Get
+
         // GET: api/Clientes
-        [HttpGet]
-        [Produces("application/json")]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        [HttpGet(Name = "ObtenerClientes")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<Cliente>>> ObtenerClientes()
         {
             if (_context.Clientes == null)
             {
                 return NotFound();
             }
+
             return await _context.Clientes.ToListAsync();
         }
 
         // GET: api/Clientes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> GetCliente(Guid id)
+        [HttpGet("{id:Guid}", Name = "ObtenerClienteId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Cliente>> ObtenerClienteId(Guid id)
         {
             if (_context.Clientes == null)
             {
@@ -45,58 +54,120 @@ namespace BancoAPI.Controllers
                 return NotFound();
             }
 
-            return cliente;
+            return Ok(cliente);
         }
 
-        // PUT: api/Clientes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(Guid id, Cliente cliente)
+        #endregion Metodos Get
+
+        #region Crear Cliente
+
+        [HttpPost(Name = "CrearCliente")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<CrearClienteDto> CrearCliente([FromBody] CrearClienteDto crearClienteDto)
         {
-            if (id != cliente.Id)
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Ingrese los datos de manera correcta");
+                return BadRequest(ModelState);
+            }
+
+            if (crearClienteDto == null)
+            {
+                return BadRequest(ModelState);
+            }
+            // crear nuevo cliente usando la Dto
+            var nuevoCliente = new Cliente()
+            {
+                Id = Guid.NewGuid(),
+                Contrasenia = crearClienteDto.Contrasenia,
+                Direccion = crearClienteDto.Direccion,
+                Edad = crearClienteDto.Edad,
+                Estado = crearClienteDto.Estado,
+                Genero = crearClienteDto.Genero,
+                Identificacion = crearClienteDto.Identificacion,
+                Nombre = crearClienteDto.Identificacion,
+                Telefono = crearClienteDto.Telefono
+            };
+
+            _context.Clientes.Add(nuevoCliente);
+            _context.SaveChanges();
+
+            return CreatedAtRoute("ObtenerClienteId", new { id = nuevoCliente.Id }, nuevoCliente);
+        }
+
+        #endregion Crear Cliente
+
+        #region Actualizar todo los datos del cliente
+
+        [HttpPut("{id:Guid}", Name = "ActualizarClienteCompleto")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ActualizarClienteCompleto(Guid id, [FromBody] Cliente cliente)
+        {
+
+            var clienteActualizar = await _context.Clientes.FindAsync(id);
+
+            if (clienteActualizar == null)
+            {
+                return NotFound("Cliente no encontrado");
+            }
+
+            // actualizar el objeto con los datos de cliente
+            clienteActualizar.Id = id;
+            clienteActualizar.Contrasenia = cliente.Contrasenia;
+            clienteActualizar.Estado = cliente.Estado;
+            clienteActualizar.Nombre = cliente.Nombre;
+            clienteActualizar.Edad = cliente.Edad;
+            clienteActualizar.Genero = cliente.Genero;
+            clienteActualizar.Identificacion = cliente.Identificacion;
+            clienteActualizar.Direccion = cliente.Direccion;
+            clienteActualizar.Telefono = cliente.Telefono;
+
+            _context.Clientes.Update(clienteActualizar);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtRoute("ObtenerClienteId", new { id = clienteActualizar.Id }, clienteActualizar);
+        }
+
+        #endregion Actualizar todo los datos del cliente
+
+        #region Actualizar un dato del cliente
+
+        [HttpPatch("{id:Guid}", Name = "ActualizarClienteParcial")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ActualizarClienteParcial(Guid id, JsonPatchDocument<Cliente> patchDoc)
+        {
+            if (patchDoc == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(cliente).State = EntityState.Modified;
+            var clienteActualizar = await _context.Clientes.FindAsync(id);
 
-            try
+            if (clienteActualizar == null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClienteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
-            return NoContent();
-        }
+            patchDoc.ApplyTo(clienteActualizar, ModelState);
 
-        // POST: api/Clientes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
-        {
-            if (_context.Clientes == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Clientes'  is null.");
-            }
-            _context.Clientes.Add(cliente);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCliente", new { id = cliente.Id }, cliente);
+            return Ok(clienteActualizar);
         }
 
-        // DELETE: api/Clientes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCliente(Guid id)
+        #endregion Actualizar un dato del cliente
+
+        #region Borrar cliente
+
+        [HttpDelete("{id:Guid}", Name = "BorrarCliente")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> BorrarCliete(Guid id)
         {
             if (_context.Clientes == null)
             {
@@ -111,12 +182,9 @@ namespace BancoAPI.Controllers
             _context.Clientes.Remove(cliente);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Cliente eliminado con exito");
         }
 
-        private bool ClienteExists(Guid id)
-        {
-            return (_context.Clientes?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        #endregion Borrar cliente
     }
 }
