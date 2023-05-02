@@ -1,7 +1,7 @@
 # BancoAPI
 
 Prueba de desarollo para la creacion de una API que simula un banco.
-* Verion 1 - Endopoint para clientes funcionando
+* Version 1 - Endopoint para clientes funcionando
 
 ## Comenzando 🚀
 ### Pre-requisitos 📋
