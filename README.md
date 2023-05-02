@@ -44,6 +44,10 @@ docker ps
 ```
 docker cp ./BancoAPI.bak sql_server:/var/opt/mssql/data
 ```
+## Ejecutando las pruebas ⚙️
+
+* Usar el archivo de postman y ejecutar los metodos
+
 
 ## Construido con 🛠️
 
