@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "0c93906a-f64e-4034-8a03-c312c19f11d3",
+		"name": "Banco API",
+		"description": "Banco API\n\nAPI para simular las trasacciones en un banco y acciones como crear un usuario.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Clientes",
+			"item": [
+				{
+					"name": "Crear Cliente",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Contrasenia\": \"Contrasenia\",\r\n    \"Direccion\" :\"Valle Chillos\",\r\n    \"Edad\"    :\"22\",\r\n    \"Estado\" : true,\r\n    \"Genero\"  : \"No Binario\",\r\n    \"identificacion\" :\"1715968778\",\r\n    \"Nombre\" : \"Juan Perez\",\r\n    \"Telefono\": \"0993955662\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:{{puertoApi}}/api/clientes",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "{{puertoApi}}",
+							"path": [
+								"api",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar todos los Clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:{{puertoApi}}/api/clientes",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "{{puertoApi}}",
+							"path": [
+								"api",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar cliente por Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:{{puertoApi}}/api/clientes/62e956de-613c-45d3-b223-08db4aaf6b8d",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "{{puertoApi}}",
+							"path": [
+								"api",
+								"clientes",
+								"62e956de-613c-45d3-b223-08db4aaf6b8d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar todo el cliente por Id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"contrasenia\": \"contraseniaSegura\",\r\n        \"estado\": false,\r\n        \"nombre\": \"1003699129\",\r\n        \"edad\": \"30\",\r\n        \"genero\": \"MASCULINO\",\r\n        \"identificacion\": \"1003699129\",\r\n        \"direccion\": \"Kennedy\",\r\n        \"telefono\": \"MASCULINO\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:{{puertoApi}}/api/clientes/3e614e6e-8e67-45e6-9866-98d7ac68d203",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "{{puertoApi}}",
+							"path": [
+								"api",
+								"clientes",
+								"3e614e6e-8e67-45e6-9866-98d7ac68d203"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar cliente por Id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:{{puertoApi}}/api/clientes/b3293f1d-21be-4efe-3809-08db4aa77d87",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "{{puertoApi}}",
+							"path": [
+								"api",
+								"clientes",
+								"b3293f1d-21be-4efe-3809-08db4aa77d87"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar cliente con JsonPatch",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\r\n    \"path\":\"/genero\",\r\n    \"op\": \"replace\",\r\n    \"value\": \"MASCULINO\"\r\n}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:{{puertoApi}}/api/clientes/a01b2a26-421d-413e-8dcd-34674b228ee2",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "{{puertoApi}}",
+							"path": [
+								"api",
+								"clientes",
+								"a01b2a26-421d-413e-8dcd-34674b228ee2"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Peticiones de clientes"
+		}
+	]
+}
