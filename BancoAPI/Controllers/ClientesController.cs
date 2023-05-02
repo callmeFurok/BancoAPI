@@ -13,10 +13,12 @@ namespace BancoAPI.Controllers
     public class ClientesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ClientesController(ApplicationDbContext context)
+        public ClientesController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         #region Metodos Get
@@ -32,8 +34,8 @@ namespace BancoAPI.Controllers
             {
                 return NotFound();
             }
-
-            return await _context.Clientes.ToListAsync();
+            var listaClientes = await _context.Clientes.AsNoTracking().ToListAsync();
+            return Ok(listaClientes);
         }
 
         // GET: api/Clientes/5
@@ -64,7 +66,7 @@ namespace BancoAPI.Controllers
         [HttpPost(Name = "CrearCliente")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<CrearClienteDto> CrearCliente([FromBody] CrearClienteDto crearClienteDto)
+        public async Task<ActionResult<CrearClienteDto>> CrearCliente([FromBody] CrearClienteDto crearClienteDto)
         {
             if (!ModelState.IsValid)
             {
@@ -90,8 +92,8 @@ namespace BancoAPI.Controllers
                 Telefono = crearClienteDto.Telefono
             };
 
-            _context.Clientes.Add(nuevoCliente);
-            _context.SaveChanges();
+            await _context.Clientes.AddAsync(nuevoCliente);
+            await _context.SaveChangesAsync();
 
             return CreatedAtRoute("ObtenerClienteId", new { id = nuevoCliente.Id }, nuevoCliente);
         }
