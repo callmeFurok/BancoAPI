@@ -1,9 +1,9 @@
-﻿using BancoAPI.Data;
+﻿using AutoMapper;
 using BancoAPI.Modelos;
 using BancoAPI.Modelos.Dtos;
+using BancoAPI.Repositorio.IRepositorio;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BancoAPI.Controllers
 {
@@ -12,10 +12,10 @@ namespace BancoAPI.Controllers
     [Produces("application/json")]
     public class ClientesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IClienteRepositorio _context;
         private readonly IMapper _mapper;
 
-        public ClientesController(ApplicationDbContext context, IMapper mapper)
+        public ClientesController(IClienteRepositorio context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
@@ -30,11 +30,9 @@ namespace BancoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<Cliente>>> ObtenerClientes()
         {
-            if (_context.Clientes == null)
-            {
-                return NotFound();
-            }
-            var listaClientes = await _context.Clientes.AsNoTracking().ToListAsync();
+
+            var listaClientes = await _context.ObtenerTodosAsync();
+
             return Ok(listaClientes);
         }
 
@@ -45,11 +43,8 @@ namespace BancoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<Cliente>> ObtenerClienteId(Guid id)
         {
-            if (_context.Clientes == null)
-            {
-                return NotFound();
-            }
-            var cliente = await _context.Clientes.FindAsync(id);
+
+            var cliente = await _context.ObtenerEspecificoAsync(c => c.Id == id);
 
             if (cliente == null)
             {
@@ -78,22 +73,16 @@ namespace BancoAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            // crear nuevo cliente usando la Dto
-            var nuevoCliente = new Cliente()
+            if (_context.ExisteCliente(crearClienteDto.Nombre))
             {
-                Id = Guid.NewGuid(),
-                Contrasenia = crearClienteDto.Contrasenia,
-                Direccion = crearClienteDto.Direccion,
-                Edad = crearClienteDto.Edad,
-                Estado = crearClienteDto.Estado,
-                Genero = crearClienteDto.Genero,
-                Identificacion = crearClienteDto.Identificacion,
-                Nombre = crearClienteDto.Identificacion,
-                Telefono = crearClienteDto.Telefono
-            };
+                ModelState.AddModelError("", "El cliente ya existe");
+                return StatusCode(404, ModelState);
+            }
 
-            await _context.Clientes.AddAsync(nuevoCliente);
-            await _context.SaveChangesAsync();
+            Cliente nuevoCliente = _mapper.Map<Cliente>(crearClienteDto);
+
+            await _context.CrearAsync(nuevoCliente);
+
 
             return CreatedAtRoute("ObtenerClienteId", new { id = nuevoCliente.Id }, nuevoCliente);
         }
@@ -109,26 +98,15 @@ namespace BancoAPI.Controllers
         public async Task<IActionResult> ActualizarClienteCompleto(Guid id, [FromBody] Cliente cliente)
         {
 
-            var clienteActualizar = await _context.Clientes.FindAsync(id);
 
-            if (clienteActualizar == null)
-            {
-                return NotFound("Cliente no encontrado");
-            }
 
             // actualizar el objeto con los datos de cliente
+            Cliente clienteActualizar = _mapper.Map<Cliente>(cliente);
             clienteActualizar.Id = id;
-            clienteActualizar.Contrasenia = cliente.Contrasenia;
-            clienteActualizar.Estado = cliente.Estado;
-            clienteActualizar.Nombre = cliente.Nombre;
-            clienteActualizar.Edad = cliente.Edad;
-            clienteActualizar.Genero = cliente.Genero;
-            clienteActualizar.Identificacion = cliente.Identificacion;
-            clienteActualizar.Direccion = cliente.Direccion;
-            clienteActualizar.Telefono = cliente.Telefono;
 
-            _context.Clientes.Update(clienteActualizar);
-            await _context.SaveChangesAsync();
+
+            await _context.ActualizarAsync(clienteActualizar);
+
 
             return CreatedAtRoute("ObtenerClienteId", new { id = clienteActualizar.Id }, clienteActualizar);
         }
@@ -147,7 +125,7 @@ namespace BancoAPI.Controllers
                 return BadRequest();
             }
 
-            var clienteActualizar = await _context.Clientes.FindAsync(id);
+            var clienteActualizar = await _context.ObtenerEspecificoAsync(c => c.Id == id);
 
             if (clienteActualizar == null)
             {
@@ -156,7 +134,7 @@ namespace BancoAPI.Controllers
 
             patchDoc.ApplyTo(clienteActualizar, ModelState);
 
-            await _context.SaveChangesAsync();
+            await _context.ActualizarAsync(clienteActualizar);
 
             return Ok(clienteActualizar);
         }
@@ -171,18 +149,14 @@ namespace BancoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> BorrarCliete(Guid id)
         {
-            if (_context.Clientes == null)
-            {
-                return NotFound();
-            }
-            var cliente = await _context.Clientes.FindAsync(id);
+
+            var cliente = await _context.ObtenerEspecificoAsync(c => c.Id == id);
             if (cliente == null)
             {
-                return NotFound();
+                return NotFound("Usuario a eliminar no encontrado");
             }
 
-            _context.Clientes.Remove(cliente);
-            await _context.SaveChangesAsync();
+            await _context.EliminarAsync(cliente);
 
             return Ok("Cliente eliminado con exito");
         }
