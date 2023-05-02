@@ -1,4 +1,5 @@
 using BancoAPI.Data;
+using BancoAPI.Mapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace BancoAPI
@@ -16,6 +17,8 @@ namespace BancoAPI
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+            // Add Automapper to the container.
+            builder.Services.AddAutoMapper(typeof(MapperConfig));
 
             builder.Services.AddControllers().AddNewtonsoftJson();
 
