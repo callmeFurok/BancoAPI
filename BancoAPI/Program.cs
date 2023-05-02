@@ -1,5 +1,7 @@
 using BancoAPI.Data;
 using BancoAPI.Mapper;
+using BancoAPI.Repositorio;
+using BancoAPI.Repositorio.IRepositorio;
 using Microsoft.EntityFrameworkCore;
 
 namespace BancoAPI
@@ -14,6 +16,8 @@ namespace BancoAPI
 
             // Add conection string to the container.
             var connectionString = builder.Configuration.GetConnectionString("DockerSQLApi");
+            // Add Cliente Repositorio 
+            builder.Services.AddScoped<IClienteRepositorio, ClienteRepositorio>();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
